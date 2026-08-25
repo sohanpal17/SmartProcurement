@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartProcure — Intelligent Multi-Mandi Procurement Orchestration</title>
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Leaflet CSS for Maps -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  
+  <!-- SVG Icon Library (Lucide-like SVG paths inline or loaded via script) -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- App Main Header -->
+  <header class="app-header">
+    <div class="logo-container">
+      <!-- India Emblem Placeholder / Flag colors -->
+      <div style="width: 4px; height: 36px; background: linear-gradient(#FF9933, #FFFFFF, #128807); border-radius: 2px;"></div>
+      <div class="header-text">
+        <h1>स्मार्टप्रोक्युअर • SmartProcure</h1>
+        <p>Intelligent Multi-Mandi Procurement & Queue Orchestration Layer</p>
+      </div>
+    </div>
+    
+    <div class="header-controls">
+      <div class="badge-official">
+        <i data-lucide="shield-check" style="width: 16px; height: 16px;"></i>
+        <span>महाराष्ट्र शासन • Government of Maharashtra</span>
+      </div>
+      <div>
+        <label for="master-lang" style="font-size: 11px; font-weight: 700; color: var(--text-muted); margin-right: 4px;">भाषा / Language:</label>
+        <select id="master-lang" class="lang-selector" onchange="changeLanguage(this.value)">
+          <option value="mr">मराठी (Marathi)</option>
+          <option value="hi">हिन्दी (Hindi)</option>
+          <option value="en" selected>English</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- Split Screen Layout -->
+  <main class="main-layout">
+    
+    <!-- LEFT PANEL: Farmer Mobile App Simulator -->
+    <section class="phone-simulator-panel">
+      <!-- Section Header -->
+      <div class="panel-section-header" style="background-color: #f3f4f6; border-bottom: 1px solid var(--border-color); padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; width: 100%; flex-shrink: 0; box-sizing: border-box;">
+        <span style="font-size: 11px; font-weight: 800; color: var(--text-dark); letter-spacing: 0.5px; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
+          <i data-lucide="smartphone" style="width: 14px; height: 14px; color: var(--primary-color);"></i>
+          Farmer Mobile App / शेतकरी मोबाईल ॲप
+        </span>
+        <span style="font-size: 9px; background-color: var(--success-light); color: var(--success-color); padding: 2px 6px; border-radius: 4px; font-weight: 700; letter-spacing: 0.5px;">SIMULATOR</span>
+      </div>
+      
+      <!-- Phone Mockup Container -->
+      <div style="flex: 1; display: flex; justify-content: center; align-items: center; width: 100%; overflow: hidden; padding: 10px 0;">
+        <div class="phone-wrapper">
+          <div class="phone-speaker"></div>
+          <div class="phone-screen">
+            
+            <!-- Status Bar -->
+            <div class="phone-status-bar">
+              <span id="phone-time">10:30 AM</span>
+              <div class="status-bar-icons">
+                <i data-lucide="wifi" style="width:12px; height:12px;"></i>
+                <i data-lucide="signal" style="width:12px; height:12px;"></i>
+                <i data-lucide="battery" style="width:14px; height:14px;"></i>
+              </div>
+            </div>
+            
+            <!-- Phone Screen Dynamic Content -->
+            <div id="phone-content" class="phone-content">
+              <!-- Screen Content will be loaded dynamically by app.js -->
+            </div>
+            
+            <!-- Phone Bottom Tab Bar -->
+            <nav id="phone-nav-bar" class="phone-nav-bar" style="display: none;">
+              <button class="phone-nav-item active" onclick="switchPhoneTab('home')">
+                <i data-lucide="home"></i>
+                <span class="trn" data-key="navHome">Home</span>
+              </button>
+              <button class="phone-nav-item" onclick="switchPhoneTab('booking')">
+                <i data-lucide="calendar"></i>
+                <span class="trn" data-key="navBook">Book</span>
+              </button>
+              <button class="phone-nav-item" onclick="switchPhoneTab('status')">
+                <i data-lucide="clock"></i>
+                <span class="trn" data-key="navStatus">Queue</span>
+              </button>
+              <button class="phone-nav-item" onclick="switchPhoneTab('notifications')">
+                <i data-lucide="bell"></i>
+                <span class="trn" data-key="navAlerts">Alerts</span>
+              </button>
+              <button class="phone-nav-item" onclick="switchPhoneTab('profile')">
+                <i data-lucide="user"></i>
+                <span class="trn" data-key="navProfile">Profile</span>
+              </button>
+            </nav>
+            
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- RIGHT PANEL: Mandi/Officer Web Dashboard -->
+    <section class="dashboard-panel">
+      <!-- Section Header -->
+      <div class="panel-section-header" style="background-color: #e5e7eb; border-bottom: 1px solid var(--border-color); padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; width: 100%; flex-shrink: 0; box-sizing: border-box;">
+        <span style="font-size: 11px; font-weight: 800; color: var(--text-dark); letter-spacing: 0.5px; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
+          <i data-lucide="monitor" style="width: 14px; height: 14px; color: var(--primary-color);"></i>
+          Officer Command Center / अधिकारी नियंत्रण केंद्र
+        </span>
+        <span style="font-size: 9px; background-color: var(--primary-light); color: var(--primary-color); padding: 2px 6px; border-radius: 4px; font-weight: 700; letter-spacing: 0.5px;">ADMIN DASHBOARD</span>
+      </div>
+      <div class="dashboard-nav">
+        <div class="dashboard-tabs">
+          <button class="dashboard-tab active" onclick="switchDashTab('overview')">
+            <i data-lucide="layout-dashboard"></i>
+            <span>Queue Overview</span>
+          </button>
+          <button class="dashboard-tab" onclick="switchDashTab('appointments')">
+            <i data-lucide="calendar-check"></i>
+            <span>Daily Bookings</span>
+          </button>
+          <button class="dashboard-tab" onclick="switchDashTab('live-queue')">
+            <i data-lucide="play-circle"></i>
+            <span>Live Gate Entry & Processing</span>
+          </button>
+          <button class="dashboard-tab" onclick="switchDashTab('capacity')">
+            <i data-lucide="bar-chart-3"></i>
+            <span>Mandi Load Balancing</span>
+          </button>
+          <button class="dashboard-tab" onclick="switchDashTab('payments')">
+            <i data-lucide="indian-rupee"></i>
+            <span>Payments Hub</span>
+          </button>
+          <button class="dashboard-tab" onclick="switchDashTab('integrations')">
+            <i data-lucide="cpu"></i>
+            <span>Backend verification & Logs</span>
+          </button>
+        </div>
+        
+        <div style="font-size: 12px; font-weight: 600; color: var(--primary-color);">
+          <span id="active-mandi-badge" class="badge badge-primary">ALL MANDIS (THANE/NAVI MUMBAI)</span>
+        </div>
+      </div>
+      
+      <!-- Dashboard Dynamic Content Area -->
+      <div id="dashboard-content" class="dashboard-content-area">
+        <!-- Rendered by app.js -->
+      </div>
+    </section>
+    
+  </main>
+
+  <!-- Interactive Scenario Controller Bar (Bottom) -->
+  <footer class="scenario-controller">
+    <div class="scenario-title">
+      <i data-lucide="sliders" style="width: 20px; height: 20px; color: var(--accent-color);"></i>
+      <div>
+        <h3>Interactive Demo Controller</h3>
+        <p>Simulate key orchestration events and see the live sync between Farmer App & Mandi Dashboard</p>
+      </div>
+    </div>
+    <div class="scenario-buttons">
+      <button class="scenario-btn active" id="scenario-1-btn" onclick="triggerScenario(1)">
+        1. Normal Booking Flow
+      </button>
+      <button class="scenario-btn" id="scenario-2-btn" onclick="triggerScenario(2)">
+        2. Mandi Overload & Redirect
+      </button>
+      <button class="scenario-btn" id="scenario-3-btn" onclick="triggerScenario(3)">
+        3. Missed Slot Recovery
+      </button>
+      <button class="scenario-btn" id="scenario-4-btn" onclick="triggerScenario(4)">
+        4. Live Gate-to-Queue Walkthrough
+      </button>
+      <button class="scenario-btn" id="scenario-5-btn" onclick="triggerScenario(5)">
+        5. Payment Verification
+      </button>
+      <button class="scenario-btn" style="background-color: var(--error-color);" onclick="resetDemo()">
+        <i data-lucide="refresh-cw" style="width:11px; height:11px; display:inline-block; vertical-align:middle; margin-right:4px;"></i> Reset Data
+      </button>
+    </div>
+  </footer>
+
+  <!-- Leaflet Map JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- SmartProcure Custom App JS -->
+  <script src="app.js"></script>
+  
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+  </script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "smartprocure-prototype",
+  "version": "1.0.0",
+  "description": "SmartProcure: Intelligent Multi-Mandi Procurement Orchestration Prototype",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
